@@ -147,6 +147,7 @@ def display_chain():
 @app.route('/valid', methods=['GET'])
 def valid():
     valid = blockchain.is_chain_valid()
+    
 
     if valid:
         response = {'message': 'The Blockchain is valid.'}
