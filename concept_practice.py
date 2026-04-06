@@ -10,21 +10,36 @@ class Block:
         self.timestamp = timestamp #time
         self.data = data #message
         self.previous_hash = previous_hash #hash of the previous block
+        self.nonce = 0 #Proof of work
         self.hash = self.calculate_hash() # Calculate the block's own hash
 
     def calculate_hash(self):
         # Concatenate block data and hash it using SHA-256
-        block_string = str(self.index) + str(self.timestamp) + str(self.data) + str(self.previous_hash) #the hash is done with the id, time, message and previous hash
+        block_string = str(self.index) + str(self.timestamp) + str(self.data) + str(self.previous_hash) + str(self.nonce) #the hash is done with the id, time, message and previous hash
         return hashlib.sha256(block_string.encode()).hexdigest() #that is returned in a sha256
+
+    def mine(self, difficulty): #Proof of work 
+        # Basically, it loops until our hash starts with 
+        # the string 0...000 with length of <difficulty>.
+        while (self.hash.startswith(str('0' * difficulty))==False):
+            # We increases our nonce so that we can get a whole different hash.
+            self.nonce+= 1
+            # Update our new hash with the new nonce value.
+            self.hash = self.calculate_hash()
+        
+    
 
 # Define the Blockchain
 class Blockchain:
     def __init__(self):
+        self.difficulty = 5
         self.chain = [self.create_genesis_block()] # Initialize the chain with a genesis block
 
     def create_genesis_block(self):
         # The first block, which has no previous hash
-        return Block(0, datetime.now(), "Genesis Block", "0") #return a default block. I don't see this in real examples
+        genesis = Block(0, datetime.now(), "Genesis Block", "0")
+        genesis.mine(self.difficulty)
+        return genesis #return a default block. I don't see this in real examples
 
     def get_latest_block(self):
         return self.chain[-1]
@@ -33,6 +48,7 @@ class Blockchain:
         # Link the new block to the previous block using its hash
         new_block.previous_hash = self.get_latest_block().hash #when added a new block, it needs to be chained to the last one already existing
         new_block.hash = new_block.calculate_hash() #the hash is calculated after the new block is created
+        new_block.mine(self.difficulty) #for Proof of work. Find the nonce
         self.chain.append(new_block) #the new block is chained to the chain 
 
     def is_chain_valid(self):
@@ -62,6 +78,8 @@ class Blockchain:
             print(current_block.timestamp)
             print('data')
             print(current_block.data)
+            print('hash')
+            print(current_block.hash)
 
 # Example Usage (refer to source links for full implementation):
 if __name__ == "__main__":
