@@ -1,6 +1,7 @@
 import hashlib
 #import time
 from datetime import datetime
+import json
 
 
 # Define the Block structure
@@ -70,6 +71,7 @@ class Blockchain:
 
     #See the chain
     def print_chain(self):
+        data = []
         for i in range(0, len(self.chain)):
             current_block = self.chain[i]
             print("index")
@@ -80,6 +82,13 @@ class Blockchain:
             print(current_block.data)
             print('hash')
             print(current_block.hash)
+            data.append({
+                "index": str(current_block.index),
+                "timestamp": str(current_block.timestamp),
+                "data": str(current_block.data),
+                "hash": str(current_block.hash)})
+        json_string = json.dumps(data, indent=4)
+        return json_string
 
 # Example Usage (refer to source links for full implementation):
 if __name__ == "__main__":
@@ -137,7 +146,7 @@ def mine_block():
 
 @app.route('/get_chain', methods=['GET'])
 def display_chain():
-    response = {'chain': str(blockchain.chain),
+    response = {'chain': blockchain.print_chain(),
                 'length': len(blockchain.chain)}
     return jsonify(response), 200
 
@@ -147,7 +156,7 @@ def display_chain():
 @app.route('/valid', methods=['GET'])
 def valid():
     valid = blockchain.is_chain_valid()
-    
+
 
     if valid:
         response = {'message': 'The Blockchain is valid.'}
