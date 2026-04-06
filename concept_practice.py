@@ -92,3 +92,68 @@ if __name__ == "__main__":
     
     # Check if the chain is valid
     print("Is Blockchain Valid?", my_blockchain.is_chain_valid())
+
+
+#Server part #########################################################
+# Flask is for creating the web
+# app and jsonify is for
+# displaying the blockchain
+from flask import Flask, jsonify
+
+# Creating the Web
+# App using flask
+app = Flask(__name__)
+
+# Create the object
+# of the class blockchain
+blockchain = Blockchain()
+
+# Mining a new block
+
+
+@app.route('/mine_block', methods=['GET'])
+def mine_block():
+    previous_block = blockchain.get_latest_block() #Get the last block 
+    print(blockchain.print_chain())
+    #previous_proof = previous_block['proof'] #Get the nonce of the last block 
+    #proof = blockchain.proof_of_work(previous_proof) #get the hash hash of the previous block I think 
+    #previous_hash = blockchain.hash(previous_block) #I think... 
+    #block = blockchain.create_block(proof, previous_hash) #Add a new block with the nonce and previous hash. I dont know why the nonce
+
+    #Well... add a new one, I think ¿?
+    new_block = Block(len(blockchain.chain), datetime.now(), {"amount": 12, "sender": "Charlie", "recipient": "Bob"}, "")
+    blockchain.add_block(new_block)
+
+    response = {'message': 'A block is MINED',
+                'index': new_block.index,
+                'timestamp': new_block.timestamp,
+                'proof': new_block.nonce,
+                'previous_hash': new_block.previous_hash}
+
+    return jsonify(response), 200
+
+# Display blockchain in json format
+
+
+@app.route('/get_chain', methods=['GET'])
+def display_chain():
+    response = {'chain': str(blockchain.chain),
+                'length': len(blockchain.chain)}
+    return jsonify(response), 200
+
+# Check validity of blockchain
+
+
+@app.route('/valid', methods=['GET'])
+def valid():
+    valid = blockchain.is_chain_valid()
+
+    if valid:
+        response = {'message': 'The Blockchain is valid.'}
+    else:
+        response = {'message': 'The Blockchain is not valid.'}
+    return jsonify(response), 200
+
+
+# Run the flask server locally
+app.run(host='127.0.0.1', port=5000)
