@@ -71,6 +71,7 @@ class Transaction:
         print(self.recipient)
         print(self.amount)
         print(signature)
+        print(public_key_hex)
         # --- Sender's public key (as bytes) ---
         public_key_bytes = bytes.fromhex(public_key_hex)
         public_key = VerifyingKey.from_string(public_key_bytes, curve=SECP256k1)
@@ -86,10 +87,13 @@ class Transaction:
         messageBytes = json.dumps(message).encode('utf-8')
         print(message)
 
+        #signatureBytes = json.dumps(message).encode('utf-8')
+        signatureBytes = bytes.fromhex(signature)
+
         # --- Verify the signature ---
         try:
-            public_key.verify(signature, messageBytes, hashfunc=hashlib.sha256)
-            self.signature = signature
+            public_key.verify(signatureBytes, messageBytes, hashfunc=hashlib.sha256)
+            #self.signature = signature
             print("✅ Signature is valid! The sender owns the private key.")
             return True
         except:
@@ -184,14 +188,14 @@ class Blockchain:
             print(current_block.index)
             print("timestamp")
             print(current_block.timestamp)
-            print('data')
-            print(current_block.data)
+            print('transactions')
+            print(current_block.current_transactions)
             print('hash')
             print(current_block.hash)
             data.append({
                 "index": str(current_block.index),
                 "timestamp": str(current_block.timestamp),
-                "data": str(current_block.data),
+                "current_transactions": str(current_block.current_transactions),
                 "hash": str(current_block.hash)})
         json_string = json.dumps(data, indent=4)
         return json_string
@@ -311,7 +315,7 @@ def mine_block():
                 'proof': new_block.nonce,
                 'previous_hash': new_block.previous_hash,
                 'hash':new_block.hash,
-                'transactions': new_block.current_transactions}
+                'transactions': str(new_block.current_transactions)}
 
     return jsonify(response), 200
 
