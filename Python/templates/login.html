@@ -1,0 +1,99 @@
+<!DOCTYPE html> <!-- Made with MistralAI for basic usage -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .login-form,
+        .transaction-form,
+        .json-display,
+        .alerts,
+        .blockchain-actions {
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        select[multiple] {
+            height: 80px;
+        }
+
+        button {
+            background: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .json-display,
+        .blockchain-display {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        .alerts {
+            min-height: 50px;
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Login Form -->
+        <div class="login-form">
+            <h2>Login</h2>
+            <form action="/login" method="post">
+                <label>Username: <input type="text" name="username"></label><br>
+                <label>Password: <input type="password" name="password"></label><br>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+</body>
+
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html> <!-- Made with MistralAI for basic usage -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .login-form,
+        .transaction-form,
+        .json-display,
+        .alerts,
+        .blockchain-actions {
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        select[multiple] {
+            height: 80px;
+        }
+
+        button {
+            background: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .json-display,
+        .blockchain-display {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        .alerts {
+            min-height: 50px;
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="/logout">Logout</a>
+
+    <!-- Transaction Form -->
+    <div class="transaction-form">
+        <h2>Send Transaction</h2>
+        <form id="transactionForm">
+            <div class="form-group">
+                <label for="sender">Sender:</label>
+                <label id="senderName">{{ user }}</label>
+            </div>
+            <div class="form-group">
+                <label for="recipient">Recipient:</label>
+                <select id="recipient" multiple>
+                    <option value="Ana">Ana</option>
+                    <option value="Bill">Bill</option>
+                    <option value="Chris">Chris</option>
+                    <option value="Danny">Danny</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="amount">Amount:</label>
+                <input type="number" id="amount" placeholder="Enter amount">
+            </div>
+            <button type="button" id="signAndSend">Sign Transaction and Send</button>
+        </form>
+    </div>
+
+    <!-- JSON Display for Transactions -->
+    <div class="json-display">
+        <h2>Transaction List</h2>
+        <div id="transactionList"></div>
+    </div>
+
+    <!-- Alerts -->
+    <div class="alerts">
+        <h2>Alerts</h2>
+        <div id="alerts">No alerts yet.</div>
+    </div>
+
+    <!-- Blockchain Actions -->
+    <div class="blockchain-actions">
+        <h2>Blockchain Actions</h2>
+        <button type="button" id="mineBlock">Mine Block</button>
+        <button type="button" id="validateBlockchain">Validate Blockchain</button>
+        <button type="button" id="showBlockchain">Show Blockchain</button>
+    </div>
+
+    <!-- Blockchain Display -->
+    <div class="blockchain-display">
+        <h2>Blockchain</h2>
+        <div id="blockchainDisplay">No blockchain data yet.</div>
+    </div>
+    </div>
+
+
+    <script>
+        //Sign the transaction
+        document.getElementById('signAndSend').addEventListener('click', async function () {
+            console.log("triggered")
+            const sender = document.getElementById('senderName').textContent;
+            const recipient = Array.from(document.getElementById('recipient').selectedOptions).map(option => option.value);
+            const amount = document.getElementById('amount').value;
+
+            const transaction = {
+                sender: sender,
+                recipient: recipient,
+                amount: amount,
+                timestamp: new Date().toISOString()
+            };
+
+            const response = await fetch('/signTransaction', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ sender, recipient, amount }),
+            });
+
+            const data = await response.json();
+            console.log(data)
+            if (data) {
+                message = {
+                    "sender": sender,
+                    "recipient": recipient,
+                    "amount": amount,
+                    "signature":data.signature
+                }
+            }
+            console.log(message)
+            var listTransaction = document.getElementById('transactionList').textContent
+            document.getElementById('transactionList').textContent = listTransaction + JSON.stringify(message)+ ";";
+
+            // Display transaction as JSON
+            //document.getElementById('transactionList').textContent = JSON.stringify(transaction, null, 2);
+
+            // Example alert
+            document.getElementById('alerts').textContent = "Transaction signed and sent!";
+        });
+
+        // Example for Mine Block button
+        document.getElementById('mineBlock').addEventListener('click', async function () {
+            //document.getElementById('alerts').textContent = "Block mined!";
+            var listTransaction = document.getElementById('transactionList').textContent
+
+            const response = await fetch('/mine_block', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ listTransaction }),
+            });
+
+
+        });
+
+
+        // Example for Show Blockchain button
+        document.getElementById('showBlockchain').addEventListener('click', async function () {
+            const response = await fetch('/get_chain', {
+                method: 'GET'
+            });
+            document.getElementById('blockchainDisplay').textContent = JSON.stringify(response);
+        });
+
+        //logout
+
+    </script>
+
+
+</body>
+
+</html>
